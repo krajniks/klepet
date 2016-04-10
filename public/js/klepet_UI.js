@@ -130,6 +130,12 @@ $(document).ready(function() {
       input.get(0).setSelectionRange(input.val().length-1,input.val().length-1);
     });
   });
+  
+  socket.on('dregljaj', function() {
+    $('#vsebina').jrumble();
+    $('#vsebina').trigger('startRumble');
+    setTimeout(function(){$('#vsebina').trigger('stopRumble');}, 1500);
+  });
 
   setInterval(function() {
     socket.emit('kanali');

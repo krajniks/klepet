@@ -142,14 +142,10 @@ function dodajSmeske(vhodnoBesedilo) {
 }
 
 function processImg(vhodnoBesedilo) {
-  var pattern = /https?:\/\/([-a-zA-Z0-9:%_\+.~#?&//=]*)\.(jpg|JPG|gif|GIF|png|PNG)/;
-  var foundAt = vhodnoBesedilo.search(pattern);
-  var currentPosition = 0;
-  while(foundAt >= 0){
-    var matchedString = pattern.exec(vhodnoBesedilo.slice(currentPosition));
-    vhodnoBesedilo = vhodnoBesedilo.slice(0,currentPosition) + vhodnoBesedilo.slice(currentPosition).replace(matchedString[0],"<img class=slika src='" + matchedString[0] + "' />");
-    currentPosition += foundAt + ("<img class=slika src='" + matchedString[0] + "' />").length;
-    foundAt = vhodnoBesedilo.slice(currentPosition).search(pattern);
+  var pattern = /https?:\/\/([-a-zA-Z0-9:%_\+.~#?&//=]*)\.(jpg|JPG|gif|GIF|png|PNG)/g;
+  var matches = vhodnoBesedilo.match(pattern);
+  for(var i = 0; i<matches.length; i++){
+    vhodnoBesedilo += "<img class=slika src='" + matches[i] + "' />"
   }
   return vhodnoBesedilo;
 }

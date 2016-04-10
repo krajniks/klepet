@@ -1,8 +1,8 @@
 function divElementEnostavniTekst(sporocilo) {
   //vse < in > pretvori v text oznake
   sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
-  //pretvori < in > pri slikah v html oznake
   sporocilo = imgBackToHtml(sporocilo);
+  sporocilo = iframeBackToHtml(sporocilo);
   return $('<div style="font-weight: bold"></div>').html(sporocilo);
 }
 
@@ -16,13 +16,27 @@ function imgBackToHtml(sporocilo){
   return sporocilo;
 }
 
+function iframeBackToHtml(sporocilo){
+  var foundAt;
+  var stringToFind = "&lt;iframe class=youtube src='https://www.youtube.com/embed/"
+  foundAt = sporocilo.indexOf(stringToFind);
+  while(foundAt>=0){
+    sporocilo = sporocilo.slice(0,foundAt) + sporocilo.slice(foundAt).replace(/&lt;iframe/,'<iframe').replace(/allowfullscreen&gt;/,'allowfullscreen>').replace(/&lt;\/iframe&gt;/,'</iframe>');
+    foundAt = sporocilo.indexOf(stringToFind);  
+  } 
+  return sporocilo;
+}
+
 function divElementHtmlTekst(sporocilo) {
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
+
   sporocilo = processImg(sporocilo);
+  sporocilo = processYoutube(sporocilo);
+
   sporocilo = dodajSmeske(sporocilo);
   var sistemskoSporocilo;
   
@@ -148,11 +162,21 @@ function dodajSmeske(vhodnoBesedilo) {
   return vhodnoBesedilo;
 }
 
+
 function processImg(vhodnoBesedilo) {
   var pattern = /https?:\/\/([-a-zA-Z0-9:%_\+.~#?&//=]*)\.(jpg|JPG|gif|GIF|png|PNG)/g;
   var matches = vhodnoBesedilo.match(pattern);
   for(var i = 0; i<matches.length; i++){
     vhodnoBesedilo += "<img class=slika src='" + matches[i] + "' />"
+  }
+  return vhodnoBesedilo;
+}
+
+function processYoutube(vhodnoBesedilo) {
+  var pattern = /https:\/\/www.youtube.com\/watch\?v=([\-&=\?\/\w])+/g;
+  var matches = vhodnoBesedilo.match(pattern);
+  for(var i = 0; i<matches.length; i++){
+    vhodnoBesedilo += "<iframe class=youtube src='https://www.youtube.com/embed/" + matches[i].slice(matches[i].indexOf('=')+1) + "' allowfullscreen></iframe>";
   }
   return vhodnoBesedilo;
 }

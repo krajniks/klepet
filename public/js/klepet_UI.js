@@ -1,11 +1,19 @@
 function divElementEnostavniTekst(sporocilo) {
-  var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
-  if (jeSmesko) {
-    sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
-    return $('<div style="font-weight: bold"></div>').html(sporocilo);
-  } else {
-    return $('<div style="font-weight: bold;"></div>').text(sporocilo);
-  }
+  //vse < in > pretvori v text oznake
+  sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
+  //pretvori < in > pri slikah v html oznake
+  sporocilo = imgBackToHtml(sporocilo);
+  return $('<div style="font-weight: bold"></div>').html(sporocilo);
+}
+
+function imgBackToHtml(sporocilo){
+  var foundAt;
+  foundAt = sporocilo.indexOf('&lt;img');
+  while(foundAt>=0){
+    sporocilo = sporocilo.slice(0,foundAt) + sporocilo.slice(foundAt).replace(/&lt;img/,'<img').replace(/\/&gt;/,'/>');
+    foundAt = sporocilo.indexOf('&lt;img');  
+  } 
+  return sporocilo;
 }
 
 function divElementHtmlTekst(sporocilo) {
@@ -14,9 +22,10 @@ function divElementHtmlTekst(sporocilo) {
 
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
+  sporocilo = processImg(sporocilo);
   sporocilo = dodajSmeske(sporocilo);
   var sistemskoSporocilo;
-
+  
   if (sporocilo.charAt(0) == '/') {
     sistemskoSporocilo = klepetApp.procesirajUkaz(sporocilo);
     if (sistemskoSporocilo) {
@@ -135,6 +144,15 @@ function dodajSmeske(vhodnoBesedilo) {
     vhodnoBesedilo = vhodnoBesedilo.replace(smesko,
       "<img src='http://sandbox.lavbic.net/teaching/OIS/gradivo/" +
       preslikovalnaTabela[smesko] + "' />");
+  }
+  return vhodnoBesedilo;
+}
+
+function processImg(vhodnoBesedilo) {
+  var pattern = /https?:\/\/([-a-zA-Z0-9:%_\+.~#?&//=]*)\.(jpg|JPG|gif|GIF|png|PNG)/g;
+  var matches = vhodnoBesedilo.match(pattern);
+  for(var i = 0; i<matches.length; i++){
+    vhodnoBesedilo += "<img class=slika src='" + matches[i] + "' />"
   }
   return vhodnoBesedilo;
 }

@@ -16,6 +16,7 @@ Klepet.prototype.spremeniKanal = function(kanal) {
   });
 };
 
+
 Klepet.prototype.procesirajUkaz = function(ukaz) {
   var besede = ukaz.split(' ');
   ukaz = besede[0].substring(1, besede[0].length).toLowerCase();
@@ -42,6 +43,12 @@ Klepet.prototype.procesirajUkaz = function(ukaz) {
       } else {
         sporocilo = 'Neznan ukaz';
       }
+      break;
+    case 'dregljaj':
+      besede.shift();
+      var vzdevek = besede.join(' ');
+      this.socket.emit('dregljaj', { vzdevek: vzdevek });
+      sporocilo = 'Dregljaj za ' + vzdevek;
       break;
     default:
       sporocilo = 'Neznan ukaz.';

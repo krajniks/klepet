@@ -14,6 +14,7 @@ function divElementHtmlTekst(sporocilo) {
 
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
+  sporocilo = processYoutube(sporocilo);
   sporocilo = dodajSmeske(sporocilo);
   var sistemskoSporocilo;
 
@@ -128,6 +129,19 @@ function dodajSmeske(vhodnoBesedilo) {
     vhodnoBesedilo = vhodnoBesedilo.replace(smesko,
       "<img src='http://sandbox.lavbic.net/teaching/OIS/gradivo/" +
       preslikovalnaTabela[smesko] + "' />");
+  }
+  return vhodnoBesedilo;
+}
+
+function processYoutube(vhodnoBesedilo) {
+  var pattern = /https:\/\/www.youtube.com\/watch\?v=[\-&=\w]+/;
+  var foundAt = vhodnoBesedilo.search(pattern);
+  var currentPosition = 0;
+  while(foundAt >= 0){
+    var matchedString = pattern.exec(vhodnoBesedilo.slice(currentPosition));
+    vhodnoBesedilo = vhodnoBesedilo.slice(0,currentPosition) + vhodnoBesedilo.slice(currentPosition).replace(matchedString[0],"<iframe class=youtube src='" + matchedString[0] + "' allowfullscreen></iframe>");
+    currentPosition += foundAt + ("<iframe class=youtube src='" + matchedString[0] + "' allowfullscreen></iframe>").length;
+    foundAt = vhodnoBesedilo.slice(currentPosition).search(pattern);
   }
   return vhodnoBesedilo;
 }

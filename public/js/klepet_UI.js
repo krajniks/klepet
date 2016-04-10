@@ -143,8 +143,10 @@ function dodajSmeske(vhodnoBesedilo) {
 function processYoutube(vhodnoBesedilo) {
   var pattern = /https:\/\/www.youtube.com\/watch\?v=([\-&=\?\/\w])+/g;
   var matches = vhodnoBesedilo.match(pattern);
-  for(var i = 0; i<matches.length; i++){
-    vhodnoBesedilo += "<iframe class=youtube src='https://www.youtube.com/embed/" + matches[i].slice(matches[i].indexOf('=')+1) + "' allowfullscreen></iframe>";
+  if(matches != null){
+    for(var i = 0; i<matches.length; i++){
+      vhodnoBesedilo += "<iframe class=youtube src='https://www.youtube.com/embed/" + matches[i].slice(matches[i].indexOf('=')+1) + "' allowfullscreen></iframe>";
+    }
   }
   return vhodnoBesedilo;
 }

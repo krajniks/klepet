@@ -6,7 +6,7 @@ function divElementEnostavniTekst(sporocilo) {
 
 function iframeBackToHtml(sporocilo){
   var foundAt;
-  var stringToFind = "&lt;iframe class=youtube src='https://www.youtube.com/"
+  var stringToFind = "&lt;iframe class=youtube src='https://www.youtube.com/embed/"
   foundAt = sporocilo.indexOf(stringToFind);
   while(foundAt>=0){
     sporocilo = sporocilo.slice(0,foundAt) + sporocilo.slice(foundAt).replace(/&lt;iframe/,'<iframe').replace(/allowfullscreen&gt;/,'allowfullscreen>').replace(/&lt;\/iframe&gt;/,'</iframe>');
@@ -141,14 +141,10 @@ function dodajSmeske(vhodnoBesedilo) {
 }
 
 function processYoutube(vhodnoBesedilo) {
-  var pattern = /https:\/\/www.youtube.com\/[\-&=\?\/\w]+/;
-  var foundAt = vhodnoBesedilo.search(pattern);
-  var currentPosition = 0;
-  while(foundAt >= 0){
-    var matchedString = pattern.exec(vhodnoBesedilo.slice(currentPosition));
-    vhodnoBesedilo = vhodnoBesedilo.slice(0,currentPosition) + vhodnoBesedilo.slice(currentPosition).replace(matchedString[0],"<iframe class=youtube src='" + matchedString[0] + "' allowfullscreen></iframe>");
-    currentPosition += foundAt + ("<iframe class=youtube src='" + matchedString[0] + "' allowfullscreen></iframe>").length;
-    foundAt = vhodnoBesedilo.slice(currentPosition).search(pattern);
+  var pattern = /https:\/\/www.youtube.com\/watch\?v=([\-&=\?\/\w])+/g;
+  var matches = vhodnoBesedilo.match(pattern);
+  for(var i = 0; i<matches.length; i++){
+    vhodnoBesedilo += "<iframe class=youtube src='https://www.youtube.com/embed/" + matches[i].slice(matches[i].indexOf('=')+1) + "' allowfullscreen></iframe>";
   }
   return vhodnoBesedilo;
 }

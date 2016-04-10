@@ -144,8 +144,10 @@ function dodajSmeske(vhodnoBesedilo) {
 function processImg(vhodnoBesedilo) {
   var pattern = /https?:\/\/([-a-zA-Z0-9:%_\+.~#?&//=]*)\.(jpg|JPG|gif|GIF|png|PNG)/g;
   var matches = vhodnoBesedilo.match(pattern);
-  for(var i = 0; i<matches.length; i++){
-    vhodnoBesedilo += "<img class=slika src='" + matches[i] + "' />"
+  if (matches != null){
+    for(var i = 0; i<matches.length; i++){
+      vhodnoBesedilo += "<img class=slika src='" + matches[i] + "' />"
+    }
   }
   return vhodnoBesedilo;
 }
